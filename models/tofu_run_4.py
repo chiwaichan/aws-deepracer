@@ -25,7 +25,7 @@ import sys
     # "waypoints": [(float, float), ]        # list of (x,y) as milestones along the track center
 
 
-# added is_offtrack
+# added is_reversed
 MAX_SPEED = 4.0
 
 def reward_function(params):
@@ -34,6 +34,8 @@ def reward_function(params):
     steering_angle = params['steering_angle']
     speed = params['speed']
     is_offtrack = params['is_offtrack']
+    all_wheels_on_track = params['all_wheels_on_track']
+    is_reversed = params['is_reversed']
     
     weighted_sub_rewards = []
     
@@ -47,15 +49,25 @@ def reward_function(params):
     steering_angle_and_speed_weight = 1.0
 
 
-    add_weighted_sub_reward(weighted_sub_rewards, "within_percentage_of_center_weight", within_percentage_of_center_weight, get_sub_reward_within_percentage_of_center(distance_from_center, track_width))
-    add_weighted_sub_reward(weighted_sub_rewards, "steering_angle_weight", steering_angle_weight, get_sub_reward_steering_angle(steering_angle))
-    add_weighted_sub_reward(weighted_sub_rewards, "speed_weight", speed_weight, get_sub_reward_speed(speed))
-    add_weighted_sub_reward(weighted_sub_rewards, "steering_angle_and_speed_weight", steering_angle_and_speed_weight, get_sub_reward_steering_angle_and_speed(steering_angle, speed))
+    add_weighted_sub_reward(weighted_sub_rewards, "within_percentage_of_center", within_percentage_of_center_weight, get_sub_reward_within_percentage_of_center(distance_from_center, track_width))
+    add_weighted_sub_reward(weighted_sub_rewards, "steering_angle", steering_angle_weight, get_sub_reward_steering_angle(steering_angle))
+    add_weighted_sub_reward(weighted_sub_rewards, "speed", speed_weight, get_sub_reward_speed(speed))
+    add_weighted_sub_reward(weighted_sub_rewards, "steering_angle_and_speed", steering_angle_and_speed_weight, get_sub_reward_steering_angle_and_speed(steering_angle, speed))
     
     if is_offtrack:      
-        add_weighted_sub_reward(weighted_sub_rewards, "is_offtrack_weight", 80.0, 1e-3)
+        add_weighted_sub_reward(weighted_sub_rewards, "is_offtrack", 80.0, 1e-3)
     else:
-        add_weighted_sub_reward(weighted_sub_rewards, "is_offtrack_weight", 1.0, 1.0)
+        add_weighted_sub_reward(weighted_sub_rewards, "is_offtrack", 1.0, 1.0)
+    
+    if all_wheels_on_track:      
+        add_weighted_sub_reward(weighted_sub_rewards, "all_wheels_on_track", 1.0, 1.0)
+    else:
+        add_weighted_sub_reward(weighted_sub_rewards, "all_wheels_on_track", 70.0, 1e-3)
+    
+    if is_reversed:      
+        add_weighted_sub_reward(weighted_sub_rewards, "is_reversed", 55.0, 1e-3)
+    else:
+        add_weighted_sub_reward(weighted_sub_rewards, "is_reversed", 1.0, 1.0)
     
     print(weighted_sub_rewards)
 
@@ -161,7 +173,8 @@ def test1():
                         'distance_from_center': 2.5, 
                         "steering_angle": -23.0, 
                         "speed": 3.0,
-                        "is_offtrack": True})
+                        "is_offtrack": True,
+                        "all_wheels_on_track": False})
 
 
 if __name__ == '__main__':
