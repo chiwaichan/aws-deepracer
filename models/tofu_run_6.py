@@ -13,6 +13,8 @@ import sys
 import math
 
 MAX_SPEED = 1.0
+DIRECTION_DIFF_WEIGHT = 5
+LONG_DISTANCE_AHEAD_HEADING_WEIGHT = 10
 
 def reward_function(params):
     # print(params)
@@ -28,12 +30,35 @@ def reward_function(params):
     waypoints = params['waypoints'] 
     heading = params['heading']
     
+    max_speed_percentage = get_max_speed_precentage(speed)
+
     if is_offtrack:      
-        return -10.0
+        if max_speed_percentage > 75.0:
+            return -10.0
+        elif max_speed_percentage > 50.0:
+            return -4.0
+        elif max_speed_percentage > 30.0:
+            return -2.0
+        else:
+            return -1.5
     elif not all_wheels_on_track:
-        return -8.0
+        if max_speed_percentage > 75.0:
+            return -8.0
+        elif max_speed_percentage > 50.0:
+            return -3.0
+        elif max_speed_percentage > 30.0:
+            return -1.5
+        else:
+            return -1.0
     elif is_reversed:
-        return -7.0
+        if max_speed_percentage > 75.0:
+            return -7.0
+        elif max_speed_percentage > 50.0:
+            return -2.5
+        elif max_speed_percentage > 30.0:
+            return -1.5
+        else:
+            return -1.0
 
 
 
@@ -41,6 +66,7 @@ def reward_function(params):
     sub_rewards = []
     
     prev_point = closest_waypoints[0]
+    next_point = closest_waypoints[1]
 
     half_track_width = track_width / 2.0
 
@@ -49,50 +75,110 @@ def reward_function(params):
     # for heading in range(-180, 181):
     #     for prev_point in range(waypoints_len):
     
-    track_direction = get_track_direction(waypoints, waypoints_len, prev_point)
-    # track_direction_2_next = get_track_direction(waypoints, waypoints_len, prev_point, 2)
-    # track_direction_3_next = get_track_direction(waypoints, waypoints_len, prev_point, 3)
-    # track_direction_4_next = get_track_direction(waypoints, waypoints_len, prev_point, 4)
-
-    direction_diff = track_direction - heading
-    # direction_2_next_diff = track_direction_2_next - heading
-    # direction_3_next_diff = track_direction_3_next - heading
-    # direction_4_next_diff = track_direction_4_next - heading
-
-
-
-    # under_steer = True
-    # over_steer = True
-
-
-    if direction_diff < -180.0:
-        direction_diff += 360.0
-        # print("direction_diff under -180 new", direction_diff)
-        
-
-    if direction_diff > 180.0:
-        direction_diff -= 360.0
-        # print("direction_diffover 180 new", direction_diff)
-
-    heading_on_left_of_track_direction = direction_diff < 0.0
-
-    direction_diff_abs = abs(direction_diff)
 
     
-    if direction_diff_abs <= 5.0:
-        sub_reward_direction_diff = 1
-    elif direction_diff_abs <= 15.0:
+    track_direction = get_track_direction(waypoints, waypoints_len, prev_point)
+
+    track_direction_ahead_1 = get_track_direction(waypoints, waypoints_len, next_point, 1)
+    track_direction_ahead_2 = get_track_direction(waypoints, waypoints_len, next_point, 2)
+    track_direction_ahead_3 = get_track_direction(waypoints, waypoints_len, next_point, 3)
+
+
+    # diff cur current waypoints
+    direction_heading_diff = track_direction - heading
+
+
+    if direction_heading_diff < -180.0:
+        direction_heading_diff += 360.0
+        # print("direction_heading_diff under -180 new", direction_heading_diff)
+        
+
+    if direction_heading_diff > 180.0:
+        direction_heading_diff -= 360.0
+        # print("direction_heading_diff 180 new", direction_heading_diff)
+
+    heading_on_left_of_track_direction = direction_heading_diff < 0.0
+
+    direction_heading_diff_abs = abs(direction_heading_diff)
+
+    
+    if direction_heading_diff_abs <= 1.0:
+        sub_reward_direction_diff = 1.0
+    elif direction_heading_diff_abs <= 3.0:
+        sub_reward_direction_diff = 0.9
+    elif direction_heading_diff_abs <= 5.0:
+        sub_reward_direction_diff = 0.8
+    elif direction_heading_diff_abs <= 15.0:
         sub_reward_direction_diff = 0.5
-    elif direction_diff_abs <= 25.0:
+    elif direction_heading_diff_abs <= 25.0:
         sub_reward_direction_diff = 0.2
+    elif direction_heading_diff_abs <= 35.0:
+        sub_reward_direction_diff = 0.05
     else:
-        sub_reward_direction_diff = 0.01
+        sub_reward_direction_diff = 0.001
 
-    sub_rewards.append(sub_reward_direction_diff)
+    sub_rewards.append(sub_reward_direction_diff * DIRECTION_DIFF_WEIGHT)
 
-    # print("")
-    # print("track_direction", track_direction, "heading", heading, "direction_diff", direction_diff, "heading_on_left_of_track_direction", heading_on_left_of_track_direction)
-    # print("direction_2_next_diff", direction_2_next_diff, "heading", heading, "direction_diff", direction_diff)
+
+
+
+    # diff for 2 waypoints ahead
+    # direction_heading_diff_ahead_1 = track_direction_ahead_1 - heading
+    # direction_heading_diff_ahead_2 = track_direction_ahead_2 - heading
+    direction_heading_diff_ahead_3 = track_direction_ahead_3 - heading
+
+    if direction_heading_diff_ahead_3 < -180.0:
+        direction_heading_diff_ahead_3 += 360.0
+        # print("direction_heading_diff_ahead_3 under -180 new", direction_heading_diff_ahead_3)
+        
+
+    if direction_heading_diff_ahead_3 > 180.0:
+        direction_heading_diff_ahead_3 -= 360.0
+        # print("direction_heading_diff_ahead_3 180 new", direction_heading_diff_ahead_3)
+
+    direction_heading_diff_ahead_3_abs = abs(direction_heading_diff_ahead_3)
+
+    # # is the track straight relative to the current waypoints
+    # track_direction_variation_ahead_1 = track_direction_ahead_1 - track_direction
+    # track_direction_variation_ahead_2 = track_direction_ahead_2 - track_direction
+    # track_direction_variation_ahead_3 = track_direction_ahead_3 - track_direction
+
+    sub_reward_long_distance_ahead_heading = 0.0
+
+    # Is the long distance ahead straight
+    if direction_heading_diff_ahead_3_abs < 6.0:
+        if max_speed_percentage > 90.0:
+            sub_reward_long_distance_ahead_heading = 1.0
+        elif max_speed_percentage > 70.0:
+            sub_reward_long_distance_ahead_heading = 0.8
+        elif max_speed_percentage > 50.0:
+            sub_reward_long_distance_ahead_heading = 0.5
+        else:
+            sub_reward_long_distance_ahead_heading = 0.1
+    elif direction_heading_diff_ahead_3_abs < 10.0:
+        if max_speed_percentage > 90.0:
+            sub_reward_long_distance_ahead_heading = 0.6
+        elif max_speed_percentage > 70.0:
+            sub_reward_long_distance_ahead_heading = 0.3
+        elif max_speed_percentage > 50.0:
+            sub_reward_long_distance_ahead_heading = 0.1
+            
+
+    sub_rewards.append(sub_reward_long_distance_ahead_heading * LONG_DISTANCE_AHEAD_HEADING_WEIGHT)
+
+
+
+
+
+
+
+            # under_steer = True
+            # over_steer = True
+
+            # if track_direction_variation_ahead_1 > 70.0:
+            #     print("")
+            #     print("track_direction", track_direction, "heading", heading, "direction_heading_diff", direction_heading_diff, "heading_on_left_of_track_direction", heading_on_left_of_track_direction)
+            #     print("track_direction_variation_ahead", track_direction_variation_ahead_1, track_direction_variation_ahead_2, track_direction_variation_ahead_3)
             
 
     # print(sub_rewards)
@@ -114,25 +200,20 @@ def get_track_direction(waypoints, waypoints_len, prev_point_idx, points_after=1
 
     return track_direction
 
-def add_weighted_sub_reward(weighted_sub_rewards, sub_reward_name, weight, sub_reward):
-    weighted_sub_rewards.append({"sub_reward_name": sub_reward_name, "sub_reward": sub_reward, "weight": weight})
-
-def get_sub_reward_within_percentage_of_center(distance_from_center, track_width):
+def get_percentage_within_of_center(distance_from_center, track_width):
     half_track_width = track_width / 2.0
-    percentage_from_center = (distance_from_center / half_track_width * 100.0)
+    return (distance_from_center / half_track_width * 100.0)
 
-    if percentage_from_center <= 10.0:
-        return 1.0
-    elif percentage_from_center <= 20.0:
-        return 0.8
-    elif percentage_from_center <= 40.0:
-        return 0.5
-    elif percentage_from_center <= 50.0:
-        return 0.4
-    elif percentage_from_center <= 70.0:
-        return 0.15
-    else:
-       return 1e-3
+
+def get_max_speed_precentage(speed):
+    percentage_of_max_speed = speed / MAX_SPEED * 100.0
+
+    return percentage_of_max_speed
+
+
+
+
+
 
 # The reward is better if going straight
 # steering_angle of -30.0 is max right
@@ -158,21 +239,6 @@ def get_sub_reward_steering_angle(steering_angle):
         return 0.2
     else:
        return 1e-3
-
-
-def get_sub_reward_speed(speed):
-    percentage_of_max_speed = speed / MAX_SPEED * 100.0
-
-    print("percentage_of_max_speed", percentage_of_max_speed)
-
-    if percentage_of_max_speed >= 90.0:
-        return 0.7
-    elif percentage_of_max_speed >= 65.0:
-        return 0.8
-    elif percentage_of_max_speed >= 50.0:
-        return 0.9
-    else:
-       return 1.0
 
 
 def get_sub_reward_steering_angle_and_speed(steering_angle, speed):
