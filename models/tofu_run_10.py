@@ -226,8 +226,71 @@ def reward_function(params):
             sub_reward_short_distance_ahead_center = -0.35
         elif percentage_within_of_center < 100.0:
             sub_reward_short_distance_ahead_center = -1.0
- 
- 
+    elif direction_heading_diff_ahead_1_abs >= 10.0:
+        if percentage_within_of_center < 10.0:
+            sub_reward_short_distance_ahead_center = 0.6
+        elif percentage_within_of_center < 20.0:
+            sub_reward_short_distance_ahead_center = 0.5
+        elif percentage_within_of_center < 40.0:
+            sub_reward_short_distance_ahead_center = 0.4
+        elif percentage_within_of_center < 60.0:
+            sub_reward_short_distance_ahead_center = 0.0
+        elif percentage_within_of_center < 75.0:
+            sub_reward_short_distance_ahead_center = -0.35
+        elif percentage_within_of_center < 100.0:
+            sub_reward_short_distance_ahead_center = -1.1
+    elif direction_heading_diff_ahead_1_abs >= 15.0:
+        if percentage_within_of_center < 10.0:
+            sub_reward_short_distance_ahead_center = 0.4
+        elif percentage_within_of_center < 20.0:
+            sub_reward_short_distance_ahead_center = 0.3
+        elif percentage_within_of_center < 40.0:
+            sub_reward_short_distance_ahead_center = 0.1
+        elif percentage_within_of_center < 60.0:
+            sub_reward_short_distance_ahead_center = 0.0
+        elif percentage_within_of_center < 75.0:
+            sub_reward_short_distance_ahead_center = -0.4
+        elif percentage_within_of_center < 100.0:
+            sub_reward_short_distance_ahead_center = -1.2
+    elif direction_heading_diff_ahead_1_abs >= 20.0:
+        if percentage_within_of_center < 10.0:
+            sub_reward_short_distance_ahead_center = 0.2
+        elif percentage_within_of_center < 20.0:
+            sub_reward_short_distance_ahead_center = 0.1
+        elif percentage_within_of_center < 40.0:
+            sub_reward_short_distance_ahead_center = 0.0
+        elif percentage_within_of_center < 60.0:
+            sub_reward_short_distance_ahead_center = -0.3
+        elif percentage_within_of_center < 75.0:
+            sub_reward_short_distance_ahead_center = -0.6
+        elif percentage_within_of_center < 100.0:
+            sub_reward_short_distance_ahead_center = -1.3
+    elif direction_heading_diff_ahead_1_abs >= 25.0:
+        if percentage_within_of_center < 10.0:
+            sub_reward_short_distance_ahead_center = 0.1
+        elif percentage_within_of_center < 20.0:
+            sub_reward_short_distance_ahead_center = 0.0
+        elif percentage_within_of_center < 40.0:
+            sub_reward_short_distance_ahead_center = -0.1
+        elif percentage_within_of_center < 60.0:
+            sub_reward_short_distance_ahead_center = -0.5
+        elif percentage_within_of_center < 75.0:
+            sub_reward_short_distance_ahead_center = -0.8
+        elif percentage_within_of_center < 100.0:
+            sub_reward_short_distance_ahead_center = -1.5
+    elif direction_heading_diff_ahead_1_abs >= 30.0:
+        if percentage_within_of_center < 10.0:
+            sub_reward_short_distance_ahead_center = 0.05
+        elif percentage_within_of_center < 20.0:
+            sub_reward_short_distance_ahead_center = 0.0
+        elif percentage_within_of_center < 40.0:
+            sub_reward_short_distance_ahead_center = -0.3
+        elif percentage_within_of_center < 60.0:
+            sub_reward_short_distance_ahead_center = -0.7
+        elif percentage_within_of_center < 75.0:
+            sub_reward_short_distance_ahead_center = -1.0
+        elif percentage_within_of_center < 100.0:
+            sub_reward_short_distance_ahead_center = -2.0
 
     sub_rewards.append(sub_reward_short_distance_ahead_center * short_distance_ahead_center_weight_nested)       
 
