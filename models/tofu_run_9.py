@@ -137,6 +137,8 @@ def reward_function(params):
     direction_heading_diff_ahead_3 = track_direction_ahead_3 - heading
     direction_heading_diff_ahead_3 = get_normalised_angle(direction_heading_diff_ahead_3)
 
+    direction_heading_diff_ahead_1_abs = abs(direction_heading_diff_ahead_1)
+    direction_heading_diff_ahead_2_abs = abs(direction_heading_diff_ahead_2)
     direction_heading_diff_ahead_3_abs = abs(direction_heading_diff_ahead_3)
 
     # # is the track straight relative to the current waypoints
@@ -190,6 +192,47 @@ def reward_function(params):
 
 
     percentage_within_of_center = get_percentage_within_of_center(distance_from_center, track_width)
+
+
+
+    sub_reward_short_distance_ahead_center = 0.0
+    short_distance_ahead_center_weight_nested = SHORT_DISTANCE_AHEAD_CENTER_WEIGHT
+
+    if direction_heading_diff_ahead_1_abs < 5.0:
+        short_distance_ahead_center_weight_nested *= 2
+
+        if percentage_within_of_center < 10.0:
+            sub_reward_short_distance_ahead_center = 1.0
+        elif percentage_within_of_center < 20.0:
+            sub_reward_short_distance_ahead_center = 0.9
+        elif percentage_within_of_center < 40.0:
+            sub_reward_short_distance_ahead_center = 0.7
+        elif percentage_within_of_center < 70.0:
+            sub_reward_short_distance_ahead_center = 0.0
+        elif percentage_within_of_center < 85.0:
+            sub_reward_short_distance_ahead_center = -0.3
+        elif percentage_within_of_center < 100.0:
+            sub_reward_short_distance_ahead_center = -1.0
+    elif direction_heading_diff_ahead_1_abs < 10.0:
+        if percentage_within_of_center < 10.0:
+            sub_reward_short_distance_ahead_center = 1.0
+        elif percentage_within_of_center < 20.0:
+            sub_reward_short_distance_ahead_center = 0.9
+        elif percentage_within_of_center < 40.0:
+            sub_reward_short_distance_ahead_center = 0.7
+        elif percentage_within_of_center < 70.0:
+            sub_reward_short_distance_ahead_center = 0.0
+        elif percentage_within_of_center < 85.0:
+            sub_reward_short_distance_ahead_center = -0.3
+        elif percentage_within_of_center < 100.0:
+            sub_reward_short_distance_ahead_center = -1.0
+
+    sub_rewards.append(sub_reward_short_distance_ahead_center * short_distance_ahead_center_weight_nested)       
+
+
+
+
+
     sub_reward_long_distance_ahead_center = 0.0
     long_distance_ahead_center_weight_nested = LONG_DISTANCE_AHEAD_CENTER_WEIGHT
 
@@ -223,6 +266,11 @@ def reward_function(params):
             sub_reward_long_distance_ahead_center = -1.0
 
     sub_rewards.append(sub_reward_long_distance_ahead_center * long_distance_ahead_center_weight_nested)       
+
+
+
+
+
 
             # under_steer = True
             # over_steer = True
