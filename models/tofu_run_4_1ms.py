@@ -26,7 +26,7 @@ import sys
 
 
 # added is_reversed
-MAX_SPEED = 4.0
+MAX_SPEED = 1.0
 
 def reward_function(params):
     print(params)
