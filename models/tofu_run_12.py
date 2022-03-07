@@ -12,6 +12,7 @@ import sys
 
 import math
 
+METERS_PER_WAYPOINT = 0.2
 MAX_SPEED = 1.0
 DIRECTION_DIFF_WEIGHT = 5
 LONG_DISTANCE_AHEAD_HEADING_WEIGHT = 10
@@ -88,6 +89,8 @@ def reward_function(params):
 
     waypoints_len = len(waypoints)
 
+    # print("waypoints_len", waypoints_len)
+
     # for heading in range(-180, 181):
     #     for prev_point in range(waypoints_len):
     
@@ -95,9 +98,14 @@ def reward_function(params):
     
     track_direction = get_track_direction(waypoints, waypoints_len, prev_point)
 
-    track_direction_ahead_1 = get_track_direction(waypoints, waypoints_len, next_point, 1)
-    track_direction_ahead_2 = get_track_direction(waypoints, waypoints_len, next_point, 2)
-    track_direction_ahead_3 = get_track_direction(waypoints, waypoints_len, next_point, 3)
+    WAYPOINTS_PER_AHEAD_INTERVAL = int(speed / METERS_PER_WAYPOINT)
+
+    if WAYPOINTS_PER_AHEAD_INTERVAL < 5:
+        WAYPOINTS_PER_AHEAD_INTERVAL = 5
+
+    track_direction_ahead_1 = get_track_direction(waypoints, waypoints_len, next_point, 1 * WAYPOINTS_PER_AHEAD_INTERVAL)
+    track_direction_ahead_2 = get_track_direction(waypoints, waypoints_len, next_point, 2 * WAYPOINTS_PER_AHEAD_INTERVAL)
+    track_direction_ahead_3 = get_track_direction(waypoints, waypoints_len, next_point, 3 * WAYPOINTS_PER_AHEAD_INTERVAL)
 
 
     # diff cur current waypoints
