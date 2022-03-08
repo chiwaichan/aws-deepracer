@@ -17,7 +17,7 @@ MAX_SPEED = 2.0
 
 DIRECTION_DIFF_WEIGHT = 5
 LONG_DISTANCE_AHEAD_HEADING_WEIGHT = 10
-IS_OFFTRACK_WEIGHT = 100
+IS_OFFTRACK_WEIGHT = 200
 ALL_WHEELS_ON_TRACK_WEIGHT = 40
 IS_REVERSED_WEIGHT = 30
 STEERING_ANGLE_DIRECTION_HEADING_DIFF_WEIGHT = 15
@@ -52,33 +52,7 @@ def reward_function(params):
     is_left_of_center = params['is_left_of_center']
     is_right_of_center = not is_left_of_center
     
-    max_speed_percentage = get_max_speed_precentage(speed)
-
-    if is_offtrack:      
-        sub_reward_is_offtrack = -0.15
-
-        if max_speed_percentage > 75.0:
-            sub_reward_is_offtrack = -1.0
-        elif max_speed_percentage > 50.0:
-            sub_reward_is_offtrack = -0.4
-        elif max_speed_percentage > 30.0:
-            sub_reward_is_offtrack = -0.2
-
-        sub_rewards.append(sub_reward_is_offtrack * IS_OFFTRACK_WEIGHT)
-
-    if is_reversed:
-        sub_reward_is_reversed = -0.1
-
-        if max_speed_percentage > 75.0:
-            sub_reward_is_reversed = -0.70
-        elif max_speed_percentage > 50.0:
-            sub_reward_is_reversed = -0.25
-        elif max_speed_percentage > 30.0:
-            sub_reward_is_reversed = -0.15
-
-        sub_rewards.append(sub_reward_is_reversed * IS_REVERSED_WEIGHT)
-
-
+    
     
     prev_point = closest_waypoints[0]
     next_point = closest_waypoints[1]
@@ -130,10 +104,41 @@ def reward_function(params):
     track_direction_ahead_2_left_turn = track_direction_ahead_2_current_track_direction_diff < 0.0
     track_direction_ahead_3_left_turn = track_direction_ahead_3_current_track_direction_diff < 0.0
 
-
-
-
     track_direction_heading_diff_abs = abs(track_direction_heading_diff)
+
+    max_speed_percentage = get_max_speed_precentage(speed)
+
+    if is_offtrack:      
+
+        if track_direction_heading_diff_abs > 75.0:
+            sub_reward_is_offtrack = -1.5
+        elif track_direction_heading_diff_abs > 50.0:
+            sub_reward_is_offtrack = -1.3
+        elif track_direction_heading_diff_abs > 30.0:
+            sub_reward_is_offtrack = -1.2
+        elif track_direction_heading_diff_abs > 10.0:
+            sub_reward_is_offtrack = -1.1
+        else:
+            sub_reward_is_offtrack = -1.0
+
+        sub_rewards.append(sub_reward_is_offtrack * IS_OFFTRACK_WEIGHT)
+
+    if is_reversed:
+        sub_reward_is_reversed = -0.1
+
+        if max_speed_percentage > 75.0:
+            sub_reward_is_reversed = -0.70
+        elif max_speed_percentage > 50.0:
+            sub_reward_is_reversed = -0.25
+        elif max_speed_percentage > 30.0:
+            sub_reward_is_reversed = -0.15
+
+        sub_rewards.append(sub_reward_is_reversed * IS_REVERSED_WEIGHT)
+
+
+
+
+
 
     
     if track_direction_heading_diff_abs <= 1.0:
