@@ -59,7 +59,7 @@ def reward_function(params):
     percentage_to_edge = get_percentage_to_edge(distance_from_center, track_width)
     
 
-    WAYPOINTS_PER_AHEAD_INTERVAL = int(speed / METERS_PER_WAYPOINT)
+    WAYPOINTS_PER_AHEAD_INTERVAL = int(1 / METERS_PER_WAYPOINT)
 
     track_direction = get_track_direction(waypoints, waypoints_len, prev_point)
     track_direction_ahead_short = get_track_direction(waypoints, waypoints_len, next_point, 1 * WAYPOINTS_PER_AHEAD_INTERVAL)
@@ -87,6 +87,8 @@ def reward_function(params):
     if is_offtrack:
         sub_reward_is_offtrack = -1.0
 
+        sub_reward_is_offtrack = sub_reward_is_offtrack * percentage_to_edge / 100.0
+
     sub_rewards.append(sub_reward_is_offtrack * IS_OFFTRACK_WEIGHT)
 
 
@@ -95,6 +97,8 @@ def reward_function(params):
 
     if is_not_all_wheels_on_track:
         sub_reward_not_all_wheels_on_track = -1.0
+
+        sub_reward_not_all_wheels_on_track = sub_reward_not_all_wheels_on_track * percentage_to_edge / 100.0
 
     sub_rewards.append(sub_reward_not_all_wheels_on_track * IS_NOT_ALL_WHEELS_ON_TRACK_WEIGHT)
 
