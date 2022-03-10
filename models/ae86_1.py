@@ -68,7 +68,7 @@ def reward_function(params):
 
     # diff cur current waypoints
     track_direction_heading_diff = get_angle_diff(track_direction, heading)
-    track_direction_heading_diff_abs = track_direction_heading_diff
+    track_direction_heading_diff_abs = abs(track_direction_heading_diff)
     # diff for short distance waypoints ahead
     track_direction_ahead_short_heading_diff = get_angle_diff(track_direction_ahead_short, heading)
     
@@ -131,7 +131,7 @@ def reward_function(params):
     sub_reward_is_reversed = 0.0
 
     if is_reversed:
-        sub_reward_is_reversed = -1.0
+        sub_reward_is_reversed = -((max_speed_percentage / 100) + 1)
 
     sub_rewards.append(sub_reward_is_reversed * IS_REVERSED_WEIGHT)
 
