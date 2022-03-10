@@ -23,6 +23,7 @@ IS_NOT_ALL_WHEELS_ON_TRACK_WEIGHT = 50
 IS_REVERSED_WEIGHT = 25
 TRACK_DIRECTION_HEADING_DIFF_WEIGHT = 5
 TRACK_DIRECTION_HEADING_TO_EDGE_WEIGHT = 20
+TRACK_DIRECTION_HEADING_STEERING_ANGLE_WEIGHT = 25
 TRACK_DIRECTION_HEADING_DIFF_NOT_ALL_WHEELS_ON_TRACK_WEIGHT = 20
 SPEED_PERCENTAGE_NOT_ALL_WHEELS_ON_TRACK_WEIGHT = 20
 STEERING_ANGLE_DIRECTION_HEADING_DIFF_WEIGHT = 15
@@ -99,6 +100,7 @@ def reward_function(params):
 
     sub_reward_track_direction_heading_diff = 0.0
     sub_reward_track_direction_heading_to_edge = 0.0
+    sub_reward_track_direction_heading_steering_angle = 0.0
 
     # going left of track direction
     if is_heading_on_left_of_track_direction:
@@ -111,6 +113,24 @@ def reward_function(params):
                 sub_reward_track_direction_heading_to_edge = -1.0
             elif track_direction_heading_diff > 80:
                 sub_reward_track_direction_heading_to_edge = -0.8
+
+
+            if steering_angle > 25:
+                sub_reward_track_direction_heading_steering_angle = -1.2
+            elif steering_angle > 15:
+                sub_reward_track_direction_heading_steering_angle = -1.0
+            elif steering_angle > 5:
+                sub_reward_track_direction_heading_steering_angle = -0.8
+            elif steering_angle > 0:
+                sub_reward_track_direction_heading_steering_angle = -0.6
+            elif steering_angle < -5:
+                sub_reward_track_direction_heading_steering_angle = 0.2
+            elif steering_angle < -15:
+                sub_reward_track_direction_heading_steering_angle = 0.6
+            elif steering_angle < -25:
+                sub_reward_track_direction_heading_steering_angle = 1.0
+
+                
         elif track_direction_heading_diff < -70:
             sub_reward_track_direction_heading_diff = -1.0
 
@@ -120,10 +140,58 @@ def reward_function(params):
                 sub_reward_track_direction_heading_to_edge = -0.8
             elif track_direction_heading_diff > 80:
                 sub_reward_track_direction_heading_to_edge = -0.6
+
+
+            if steering_angle > 25:
+                sub_reward_track_direction_heading_steering_angle = -1.0
+            elif steering_angle > 15:
+                sub_reward_track_direction_heading_steering_angle = -0.8
+            elif steering_angle > 5:
+                sub_reward_track_direction_heading_steering_angle = -0.6
+            elif steering_angle > 0:
+                sub_reward_track_direction_heading_steering_angle = -0.4
+            elif steering_angle < -5:
+                sub_reward_track_direction_heading_steering_angle = 0.2
+            elif steering_angle < -15:
+                sub_reward_track_direction_heading_steering_angle = 0.6
+            elif steering_angle < -25:
+                sub_reward_track_direction_heading_steering_angle = 1.0
+
+
         elif track_direction_heading_diff < -55:
             sub_reward_track_direction_heading_diff = -0.8
+
+            if steering_angle > 25:
+                sub_reward_track_direction_heading_steering_angle = -0.9
+            elif steering_angle > 15:
+                sub_reward_track_direction_heading_steering_angle = -0.7
+            elif steering_angle > 5:
+                sub_reward_track_direction_heading_steering_angle = -0.5
+            elif steering_angle > 0:
+                sub_reward_track_direction_heading_steering_angle = -0.3
+            elif steering_angle < -5:
+                sub_reward_track_direction_heading_steering_angle = 0.2
+            elif steering_angle < -15:
+                sub_reward_track_direction_heading_steering_angle = 0.6
+            elif steering_angle < -25:
+                sub_reward_track_direction_heading_steering_angle = 1.0
         elif track_direction_heading_diff < -40:
             sub_reward_track_direction_heading_diff = -0.7
+
+            if steering_angle > 25:
+                sub_reward_track_direction_heading_steering_angle = -0.8
+            elif steering_angle > 15:
+                sub_reward_track_direction_heading_steering_angle = -0.6
+            elif steering_angle > 5:
+                sub_reward_track_direction_heading_steering_angle = -0.4
+            elif steering_angle > 0:
+                sub_reward_track_direction_heading_steering_angle = -0.2
+            elif steering_angle < -5:
+                sub_reward_track_direction_heading_steering_angle = 0.2
+            elif steering_angle < -15:
+                sub_reward_track_direction_heading_steering_angle = 0.6
+            elif steering_angle < -25:
+                sub_reward_track_direction_heading_steering_angle = 1.0
         elif track_direction_heading_diff < -20:
             sub_reward_track_direction_heading_diff = -0.5
         elif track_direction_heading_diff < -10:
@@ -140,6 +208,23 @@ def reward_function(params):
                 sub_reward_track_direction_heading_to_edge = -1.0
             elif track_direction_heading_diff > 80:
                 sub_reward_track_direction_heading_to_edge = -0.8
+
+            if steering_angle < -25:
+                sub_reward_track_direction_heading_steering_angle = -1.2
+            elif steering_angle < -15:
+                sub_reward_track_direction_heading_steering_angle = -1.0
+            elif steering_angle < -5:
+                sub_reward_track_direction_heading_steering_angle = -0.8
+            elif steering_angle < 0:
+                sub_reward_track_direction_heading_steering_angle = -0.6
+            elif steering_angle > 5:
+                sub_reward_track_direction_heading_steering_angle = 0.2
+            elif steering_angle > 15:
+                sub_reward_track_direction_heading_steering_angle = 0.6
+            elif steering_angle > 25:
+                sub_reward_track_direction_heading_steering_angle = 1.0
+
+
         elif track_direction_heading_diff > 70:
             sub_reward_track_direction_heading_diff = -1.0
 
@@ -149,10 +234,61 @@ def reward_function(params):
                 sub_reward_track_direction_heading_to_edge = -0.8
             elif track_direction_heading_diff > 80:
                 sub_reward_track_direction_heading_to_edge = -0.6
+
+            if steering_angle < -25:
+                sub_reward_track_direction_heading_steering_angle = -1.0
+            elif steering_angle < -15:
+                sub_reward_track_direction_heading_steering_angle = -0.8
+            elif steering_angle < -5:
+                sub_reward_track_direction_heading_steering_angle = -0.6
+            elif steering_angle < 0:
+                sub_reward_track_direction_heading_steering_angle = -0.4
+            elif steering_angle > 5:
+                sub_reward_track_direction_heading_steering_angle = 0.2
+            elif steering_angle > 15:
+                sub_reward_track_direction_heading_steering_angle = 0.6
+            elif steering_angle > 25:
+                sub_reward_track_direction_heading_steering_angle = 1.0
+
+
         elif track_direction_heading_diff > 55:
             sub_reward_track_direction_heading_diff = -0.8
+
+            if steering_angle < -25:
+                sub_reward_track_direction_heading_steering_angle = -0.9
+            elif steering_angle < -15:
+                sub_reward_track_direction_heading_steering_angle = -0.7
+            elif steering_angle < -5:
+                sub_reward_track_direction_heading_steering_angle = -0.5
+            elif steering_angle > 0:
+                sub_reward_track_direction_heading_steering_angle = -0.3
+            elif steering_angle > 5:
+                sub_reward_track_direction_heading_steering_angle = 0.2
+            elif steering_angle > 15:
+                sub_reward_track_direction_heading_steering_angle = 0.6
+            elif steering_angle > 25:
+                sub_reward_track_direction_heading_steering_angle = 1.0
+
+
         elif track_direction_heading_diff > 40:
             sub_reward_track_direction_heading_diff = -0.7
+
+            if steering_angle < -25:
+                sub_reward_track_direction_heading_steering_angle = -0.8
+            elif steering_angle < -15:
+                sub_reward_track_direction_heading_steering_angle = -0.6
+            elif steering_angle < -5:
+                sub_reward_track_direction_heading_steering_angle = -0.4
+            elif steering_angle > 0:
+                sub_reward_track_direction_heading_steering_angle = -0.2
+            elif steering_angle > 5:
+                sub_reward_track_direction_heading_steering_angle = 0.2
+            elif steering_angle > 15:
+                sub_reward_track_direction_heading_steering_angle = 0.6
+            elif steering_angle > 25:
+                sub_reward_track_direction_heading_steering_angle = 1.0
+
+
         elif track_direction_heading_diff > 20:
             sub_reward_track_direction_heading_diff = -0.5
         elif track_direction_heading_diff > 10:
@@ -165,6 +301,7 @@ def reward_function(params):
 
     sub_rewards.append(sub_reward_track_direction_heading_diff * TRACK_DIRECTION_HEADING_DIFF_WEIGHT)
     sub_rewards.append(sub_reward_track_direction_heading_to_edge * TRACK_DIRECTION_HEADING_TO_EDGE_WEIGHT)
+    sub_rewards.append(sub_reward_track_direction_heading_steering_angle * TRACK_DIRECTION_HEADING_STEERING_ANGLE_WEIGHT)
 
 
 
@@ -320,7 +457,8 @@ def reward_function(params):
             heading,
             track_direction_heading_diff,
             sub_reward_track_direction_heading_diff,
-            # sub_reward_track_direction_heading_to_edge,
+            sub_reward_track_direction_heading_to_edge,
+            sub_reward_track_direction_heading_steering_angle,
 
             sub_reward_straight_speed_5_degree_deviation,
 
@@ -356,7 +494,8 @@ def reward_function(params):
             MAX_SPEED,
 
             TRACK_DIRECTION_HEADING_DIFF_WEIGHT,
-            # TRACK_DIRECTION_HEADING_TO_EDGE_WEIGHT,
+            TRACK_DIRECTION_HEADING_TO_EDGE_WEIGHT,
+            TRACK_DIRECTION_HEADING_STEERING_ANGLE_WEIGHT,
             PROGRESS_WEIGHT,
             IS_OFFTRACK_WEIGHT,
             IS_ALL_WHEELS_ON_TRACK_WEIGHT,
