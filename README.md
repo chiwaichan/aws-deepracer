@@ -190,10 +190,7 @@ def get_sub_reward_steering_angle_and_speed_weight(steering_angle, speed):
     return (((steering_angle_reward * steering_angle_weight) + (speed_reward * speed_weight)) / (steering_angle_weight + speed_weight))
 ```
 
-Here is a video of one of the simulation runs:
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/-PeGCyBTzVc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
+Here is a video of one of the simulation runs: [https://www.youtube.com/watch?v=-PeGCyBTzVc](https://www.youtube.com/watch?v=-PeGCyBTzVc)
 
 Here is a link to my Github repository where I have all of versions of reward functions I created: [https://github.com/chiwaichan/aws-deepracer/tree/main/models](https://github.com/chiwaichan/aws-deepracer/tree/main/models)
 
